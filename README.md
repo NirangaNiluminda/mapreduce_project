@@ -1,6 +1,5 @@
 # Network Intrusion Traffic Aggregation using MapReduce
 
-**Module:** Cloud Computing (EE7222/EC7204) — University of Ruhuna
 **Assignment:** Large-Scale Data Analysis Using MapReduce
 **Dataset:** CICIDS2017 — Network Intrusion Detection Dataset
 **Task:** Attack Type Traffic Aggregation
