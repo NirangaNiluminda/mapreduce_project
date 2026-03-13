@@ -1,0 +1,6 @@
+BENIGN	Count: 439683	Avg_Flow_Duration(us): 12104958.4929	Avg_Flow_Bytes/s: 2433047.1299	Avg_Pkt_Len_Mean(bytes): 113.2666
+DoS GoldenEye	Count: 10293	Avg_Flow_Duration(us): 23127222.2171	Avg_Flow_Bytes/s: 688.2391	Avg_Pkt_Len_Mean(bytes): 501.1586
+DoS Hulk	Count: 230124	Avg_Flow_Duration(us): 57317129.1722	Avg_Flow_Bytes/s: 29401.7163	Avg_Pkt_Len_Mean(bytes): 594.2017
+DoS Slowhttptest	Count: 5499	Avg_Flow_Duration(us): 57719891.7345	Avg_Flow_Bytes/s: 21642420.6265	Avg_Pkt_Len_Mean(bytes): 132.1717
+DoS slowloris	Count: 5796	Avg_Flow_Duration(us): 56554365.0212	Avg_Flow_Bytes/s: 43921.2234	Avg_Pkt_Len_Mean(bytes): 50.9574
+Heartbleed	Count: 11	Avg_Flow_Duration(us): 110679707.5455	Avg_Flow_Bytes/s: 65902.8022	Avg_Pkt_Len_Mean(bytes): 1626.6023
