@@ -48,6 +48,14 @@ echo ""
 
 chmod +x "$MAPPER" "$REDUCER"
 
+# --- Copy scripts to /tmp to avoid spaces-in-path URI issue ---
+TMP_DIR="/tmp/mapreduce_job"
+mkdir -p "$TMP_DIR"
+cp "$MAPPER"  "$TMP_DIR/mapper.py"
+cp "$REDUCER" "$TMP_DIR/reducer.py"
+MAPPER_TMP="$TMP_DIR/mapper.py"
+REDUCER_TMP="$TMP_DIR/reducer.py"
+
 # --- Step 1: Make sure HDFS input exists with data ---
 info "Step 1: Checking HDFS input..."
 if ! hdfs dfs -test -e "$HDFS_INPUT/wednesday.csv" 2>/dev/null; then
@@ -70,7 +78,7 @@ hdfs dfs -test -d "$HDFS_OUTPUT" 2>/dev/null && {
 info "Step 3: Running MapReduce job..."
 echo ""
 hadoop jar "$STREAMING_JAR" \
-    -files "$MAPPER","$REDUCER" \
+    -files "$MAPPER_TMP","$REDUCER_TMP" \
     -mapper  "python3 mapper.py"  \
     -reducer "python3 reducer.py" \
     -input   "$HDFS_INPUT"        \
