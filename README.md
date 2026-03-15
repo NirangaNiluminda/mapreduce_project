@@ -3,6 +3,7 @@
 **Assignment:** Large-Scale Data Analysis Using MapReduce
 **Dataset:** CICIDS2017 — Network Intrusion Detection Dataset
 **Task:** Attack Type Traffic Aggregation
+**GitHub:** https://github.com/NirangaNiluminda/mapreduce_project
 
 ---
 
@@ -110,14 +111,17 @@ export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 <configuration>
   <property>
     <name>fs.defaultFS</name>
-    <value>hdfs://localhost:9000</value>
+    <value>hdfs://localhost:9002</value>
   </property>
 </configuration>
 ```
 
+> **Note:** Port 9002 is used instead of the default 9000 because Docker was already occupying ports 9000 and 9001 on this machine. See the [Troubleshooting](#troubleshooting) section below.
+
 **`$HADOOP_HOME/etc/hadoop/hdfs-site.xml`**
 ```xml
 <configuration>
+  <property><name>dfs.namenode.rpc-address</name><value>localhost:9002</value></property>
   <property><name>dfs.replication</name><value>1</value></property>
   <property><name>dfs.namenode.name.dir</name><value>/usr/local/hadoop/data/namenode</value></property>
   <property><name>dfs.datanode.data.dir</name><value>/usr/local/hadoop/data/datanode</value></property>
@@ -143,8 +147,14 @@ export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
     <name>yarn.nodemanager.env-whitelist</name>
     <value>JAVA_HOME,HADOOP_COMMON_HOME,HADOOP_HDFS_HOME,HADOOP_CONF_DIR,CLASSPATH_PREPEND_DISTCACHE,HADOOP_YARN_HOME,HADOOP_HOME,PATH,LANG,TZ,HADOOP_MAPRED_HOME</value>
   </property>
+  <property>
+    <name>yarn.resourcemanager.webapp.address</name>
+    <value>0.0.0.0:8090</value>
+  </property>
 </configuration>
 ```
+
+> **Note:** ResourceManager web UI is set to port 8090 (default is 8088, which Docker was using).
 
 ### 6. Format HDFS and start Hadoop
 ```bash
@@ -197,6 +207,37 @@ hdfs dfs -cat /user/niranga/network_intrusion/output/part-00000
 stop-yarn.sh
 stop-dfs.sh
 ```
+
+---
+
+## Troubleshooting
+
+### Port conflicts with Docker (or other services)
+
+If the NameNode or ResourceManager fails to start, another process may be using the default Hadoop ports. Check with:
+
+```bash
+sudo lsof -i :9000   # default NameNode RPC port
+sudo lsof -i :8088   # default ResourceManager web UI port
+```
+
+**Fix applied in this project:**
+
+| Daemon | Default port | Changed to | Config file |
+|--------|-------------|------------|-------------|
+| NameNode RPC | 9000 | **9002** | `core-site.xml`, `hdfs-site.xml` |
+| ResourceManager web UI | 8088 | **8090** | `yarn-site.xml` |
+
+After changing any config file, restart all daemons:
+```bash
+stop-yarn.sh && stop-dfs.sh
+start-dfs.sh && start-yarn.sh
+jps   # must show all 5 daemons
+```
+
+### Spaces in project path
+
+If the project folder path contains spaces, the Hadoop Streaming `-files` argument will fail with a `URISyntaxException`. The `run.sh` script handles this automatically by copying `mapper.py` and `reducer.py` to `/tmp/mapreduce_job/` before running the job.
 
 ---
 
